@@ -11,26 +11,28 @@
 |
 */
 
-Route::get('/', 'HomeController@index')->name('welcome');
-Route::post('/reservation', 'ReservationController@reserve')->name('reservation.reserve');
-Route::post('/contact', 'ContactController@sendMessage')->name('contact.send');
+
 
 Auth::routes(['register'=> true]);
 
-// Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes();
 
-Route::group(['prefix'=>'admin','middleware'=>'auth','namespace'=>'Admin'], function (){
-	Route::get('dashboard', 'DashboardController@index')->name('admin.dashboard');
-	Route::resource('slider', 'SliderController');
-	Route::resource('category','CategoryController');
-	Route::resource('item','ItemController');
-	Route::get('reservation', 'ReservationController@index')->name('reservation.index');
-	Route::post('reservation/{id}','ReservationController@status')->name('reservation.status');
-	Route::delete('reservation/{id}', 'ReservationController@destroy')->name('reservation.destroy');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('welcome');
+Route::post('/reservation',[ReservationController::class, 'reserve'])->name('reservation.reserve');
+Route::post('/contact', [ContactController::class, 'sendMessage'])->name('contact.send');
 
 
-	Route::get('contact','ContactController@index')->name('contact.index');
-    Route::get('contact/{id}','ContactController@show')->name('contact.show');
-    Route::delete('contact/{id}','ContactController@destroy')->name('contact.destroy');
+Route::group(['prefix'=> 'admin', 'middleware'=> 'auth'], function(){
+	Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+	Route::resource('slider', SliderController::class);
+	Route::resource('category', CategoryController::class);
+	Route::resource('item', ItemController::class);
 
+	Route::get('reservation', [ReservationController::class, 'index'])->name('reservation.index');
+	Route::post('reservation/{id}', [ReservationController::class, 'status'])->name('reservation.status');
+	Route::delete('reservation/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy');
+
+	Route::get('contact', [ContactController::class, 'index'])->name('contact.index');
+	Route::get('contact/{id}', [ContactController::class, 'show'])->name('contact.show');
+	Route::delete('contact/{id}', [ContactController::class, 'destroy'])->name('contact.destroy');
 });
